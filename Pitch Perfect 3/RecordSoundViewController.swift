@@ -59,7 +59,6 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
     pauseFlag = 0                               //<- Set flag to init recording value
     }
 
-    
     // FUNCTION: Button Action - Record Audio
     
     @IBAction func recordAudio(sender: UIButton) {

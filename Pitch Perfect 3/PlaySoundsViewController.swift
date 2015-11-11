@@ -33,8 +33,6 @@ class PlaySoundsViewController: UIViewController {
         audioPlayer.enableRate = true
         audioEngine.attachNode(audioPlayerNode)    //<- Move the new audio node here to fix audio overlap issue
         audioEngine.attachNode(audioReverbPlayer)  //<- Attach audioReverbPlayer in this function
-        
-        
     }
     
     
@@ -42,9 +40,8 @@ class PlaySoundsViewController: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        
-        
     }
+    
     
     // FUNCTION: Button Action - Stop all audio players
     
