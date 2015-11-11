@@ -28,8 +28,8 @@ class PlaySoundsViewController: UIViewController {
         super.viewDidLoad()
         
         audioEngine = AVAudioEngine()
-        audioFile = AVAudioFile(forReading: receivedAudio.filePathUrl, error: nil)
-        audioPlayer = AVAudioPlayer(contentsOfURL: receivedAudio.filePathUrl, error: nil)
+        audioFile = try? AVAudioFile(forReading: receivedAudio.filePathUrl)
+        audioPlayer = try? AVAudioPlayer(contentsOfURL: receivedAudio.filePathUrl)
         audioPlayer.enableRate = true
         audioEngine.attachNode(audioPlayerNode)    //<- Move the new audio node here to fix audio overlap issue
         audioEngine.attachNode(audioReverbPlayer)  //<- Attach audioReverbPlayer in this function
@@ -124,7 +124,7 @@ class PlaySoundsViewController: UIViewController {
         audioEngine.reset()
         
         // Set audio based on pitch setting
-        var changePitchEffect = AVAudioUnitTimePitch()
+        let changePitchEffect = AVAudioUnitTimePitch()
         changePitchEffect.pitch = pitch
         audioEngine.attachNode(changePitchEffect)
         
@@ -132,7 +132,11 @@ class PlaySoundsViewController: UIViewController {
         audioEngine.connect(changePitchEffect, to: audioEngine.outputNode, format: nil)
         
         audioPlayerNode.scheduleFile(audioFile, atTime: nil, completionHandler: nil)
-        audioEngine.startAndReturnError(nil)
+        do {
+            //try audioEngine.startAndReturnError()
+            try audioEngine.start()
+        } catch _ {
+        }
         
         audioPlayerNode.play()                 //<- Play audio with pitch change
     }
@@ -148,14 +152,18 @@ class PlaySoundsViewController: UIViewController {
         audioEngine.reset()
         
         // set reverb mix rate
-        var changeReverbEffect = AVAudioUnitReverb()
+        let changeReverbEffect = AVAudioUnitReverb()
         changeReverbEffect.wetDryMix = reverb
         audioEngine.attachNode(changeReverbEffect)
         
         audioEngine.connect(audioReverbPlayer, to: changeReverbEffect, format: nil)
         audioEngine.connect(changeReverbEffect, to: audioEngine.outputNode, format: nil)
         audioReverbPlayer.scheduleFile(audioFile, atTime: nil, completionHandler: nil)
-        audioEngine.startAndReturnError(nil)
+        do {
+            //try audioEngine.startAndReturnError()
+            try audioEngine.start()
+        } catch _ {
+        }
         audioReverbPlayer.play()                 //<- Play audio with delay change
     }
     

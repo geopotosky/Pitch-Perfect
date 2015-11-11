@@ -77,7 +77,7 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
     tapToPause.hidden = false
     
     // Setup the audio file
-    let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as! String
+    let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] 
     let currentDateTime = NSDate()
     let formatter = NSDateFormatter()
     formatter.dateFormat = "ddMMyyyy-HHmmss"
@@ -85,10 +85,14 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
     let pathArray = [dirPath, recordingName]
     let filePath = NSURL.fileURLWithPathComponents(pathArray)
     
-    var session = AVAudioSession.sharedInstance()
-    session.setCategory(AVAudioSessionCategoryPlayAndRecord, error: nil)
+    let session = AVAudioSession.sharedInstance()
+    do {
+        try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
+    } catch _ {
+    }
     
-    audioRecorder = AVAudioRecorder(URL: filePath, settings: nil, error: nil)
+    //audioRecorder = try? AVAudioRecorder(URL: filePath!, settings: nil)
+    audioRecorder = try? AVAudioRecorder(URL: filePath!, settings: [:])
     audioRecorder.delegate = self
     audioRecorder.meteringEnabled = true;
     audioRecorder.prepareToRecord()
@@ -118,7 +122,7 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
     
     // FUNCTON: Check to see if the audio is finished recording
     
-    func audioRecorderDidFinishRecording(recorder: AVAudioRecorder!, successfully flag: Bool) {
+    func audioRecorderDidFinishRecording(recorder: AVAudioRecorder, successfully flag: Bool) {
     if (flag){
     
     recordedAudio = RecordedAudio(filePathUrl: recorder.url, title: recorder.url.lastPathComponent)      //<- Call the initialized variables with values
@@ -153,9 +157,15 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
     audioRecorder.stop()                                     //<- Stop the recording
     
     // Change the speaker (make it LOUDER)
-    var audioSession = AVAudioSession.sharedInstance()
-    audioSession.setActive(false, error: nil)
-    audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, withOptions: AVAudioSessionCategoryOptions.DefaultToSpeaker, error: nil)
+    let audioSession = AVAudioSession.sharedInstance()
+    do {
+        try audioSession.setActive(false)
+    } catch _ {
+    }
+    do {
+        try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, withOptions: AVAudioSessionCategoryOptions.DefaultToSpeaker)
+    } catch _ {
+    }
     }
 
 
