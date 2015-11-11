@@ -167,8 +167,5 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
     }
     }
 
-
-
-
 }
 
